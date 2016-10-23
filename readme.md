@@ -22,8 +22,8 @@ The demo prepares the main Schampsen app's API documentation.
 
 ### Needed packages for linux:
 
-* docker
-* node.js
+* docker 1.12.x
+* node.js 4.6.x (LTS)
 * wget
 * realpath
  
