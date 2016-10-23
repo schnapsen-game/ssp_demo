@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSP - Stone, Scrissors, Paper - The ultimate game</title>
+    <style>
+        #userList li { color: red; }
+        #userList li.isLoggedIn { color: green; }
+    </style>
+</head>
+<body>
+<h1>SSP - Stone, Scrissors, Paper - The ultimate game</h1>
+<script>AUTOBAHN_DEBUG = false;</script>
+<script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+
+<form>
+    <label for="username">Username: </label><input type="text" name="username" id="username" />
+    <label for="password">Password: </label><input type="password" name="password" id="password" />
+    <div id="buttons">
+        <button id="login">Login</button>
+        <button id="logout">Logout</button>
+        <button id="register">Register</button>
+        <button id="unregsiter">Unregister</button>
+    </div>
+</form>
+<ul id="userList"></ul>
+
+<script>
+    console.log("Running AutobahnJS " + autobahn.version);
+    var userToken = undefined;
+    var connection = new autobahn.Connection({
+        url: "ws://127.0.0.1:8080/ws",
+        realm: "ssp-game"
+    });
+    connection.onopen = function (session, details) {
+        console.log("Connected:", details);
+
+        session.subscribe('com.ssp.user.channel.updateUserList', function (users) {
+            cleanUpUserList();
+            fillUserList(users);
+        });
+
+        session.call('com.ssp.user.rpc.getUsers').then(fillUserList);
+
+        document.getElementById('register').addEventListener('click', function (event) {
+            var loginData = getLoginData();
+            session.call('com.ssp.user.rpc.register', [loginData.username, loginData.password])
+                    .then(function (result) {
+                        console.log('Successful registration.', result);})
+                    .catch(handleError);
+            event.preventDefault();
+        });
+
+        document.getElementById('login').addEventListener('click', function (event) {
+            var loginData = getLoginData();
+            session.call('com.ssp.user.rpc.login', [loginData.username, loginData.password])
+                    .then(function (result) {
+                        userToken = result;
+                        console.log('Successful login.', result, userToken);
+                    })
+                    .catch(handleError);
+            event.preventDefault();
+        });
+
+        document.getElementById('logout').addEventListener('click', function (event) {
+            var loginData = getLoginData();
+            console.log(userToken);
+            session.call('com.ssp.user.rpc.logout', [loginData.username, userToken])
+                    .then(function (result) {
+                        console.log('Successful logout.', result);})
+                    .catch(handleError);
+            event.preventDefault();
+        });
+
+        document.getElementById('unregsiter').addEventListener('click', function (event) {
+            var loginData = getLoginData();
+            session.call('com.ssp.user.rpc.unregister', [loginData.username, loginData.password])
+                    .then(function (result) {
+                        console.log('Successful unregistration.', result);})
+                    .catch(handleError);
+            event.preventDefault();
+        });
+
+    };
+    connection.onclose = function (reason, details) {
+        console.log("Connection lost: ", reason, details);
+    };
+    connection.open();
+
+    function getLoginData() {
+        return {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+        };
+    }
+
+    function handleError(error) {
+        console.log('ERROR:', error.args.toString(), error);
+    }
+
+    function cleanUpUserList() {
+        var userList = document.getElementById('userList');
+        while (userList.hasChildNodes())
+            userList.removeChild(userList.firstChild);
+    }
+
+    function fillUserList(users) {
+        console.log(users);
+        var userList = document.getElementById('userList');
+        users.forEach(function (user) {
+            var element = document.createElement('li');
+            element.className = user.isLoggedIn ? 'user isLoggedIn' : 'user';
+            element.textContent = user.username;
+            userList.appendChild(element);
+        });
+    }
+
+</script>
+</body>
+</html>

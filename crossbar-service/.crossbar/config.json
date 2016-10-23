@@ -1,0 +1,79 @@
+{
+    "version": 2,
+    "workers": [
+    {
+        "type": "router",
+        "realms": [
+            {
+                "name": "ssp-game",
+                "roles": [
+                    {
+                        "name": "public",
+                        "permissions": [
+                            {
+                                "uri": "",
+                                "match": "prefix",
+                                "allow": {
+                                    "call": true,
+                                    "register": true,
+                                    "publish": true,
+                                    "subscribe": true
+                                },
+                                "disclose": {
+                                    "caller": false,
+                                    "publisher": false
+                                },
+                                "cache": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "user",
+                        "permissions": [
+                            {
+                                "uri": "",
+                                "match": "prefix",
+                                "allow": {
+                                    "call": true,
+                                    "register": true,
+                                    "publish": true,
+                                    "subscribe": true
+                                },
+                                "disclose": {
+                                    "caller": false,
+                                    "publisher": false
+                                },
+                                "cache": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "transports": [
+            {
+                "type": "web",
+                "endpoint": {
+                    "type": "tcp",
+                    "port": 8080
+                },
+                "paths": {
+                    "/": {
+                        "type": "static",
+                        "directory": "../web"
+                    },
+                    "ws": {
+                        "type": "websocket",
+                        "auth": {
+                            "anonymous": {
+                                "type": "static",
+                                "role": "public"
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+]
+}
