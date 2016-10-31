@@ -3,11 +3,12 @@ var autobahn = require('autobahn');
 var crypto = require('crypto');
 var has = Object.prototype.hasOwnProperty;
 
-var users = {};
-var api = {};
+var users = Object.create(null);
+var api = Object.create(null);
 var tokenId = Math.floor(Math.random() * 100);
 var tokenSalt = 'dflsdjfhsdsdfjl';
 var localSession = undefined;
+var serviceName = 'com.ssp.user';
 
 // interface functions
 api.login = function login(username, password) {
@@ -24,7 +25,7 @@ api.login = function login(username, password) {
     // login the user
     users[username].token = generateToken(username);
     console.log('INFO: user logged in: ', username, users[username].token);
-    localSession.publish('com.ssp.user.channel.updateUserList', api.getUsers());
+    localSession.publish('local:updateUserList', api.getUsers());
     return users[username].token;
 };
 
@@ -38,7 +39,7 @@ api.register = function register(username, password) {
         data: {}
     };
     console.log('INFO: registered: ', username);
-    localSession.publish('com.ssp.user.channel.updateUserList', api.getUsers());
+    localSession.publish('local:updateUserList', api.getUsers());
     return true;
 };
 
@@ -46,7 +47,7 @@ api.logout = function logout(username, token) {
     if (!api.isValidLogin(username, token)) throw['Invalid request.'];
     users[username].token = undefined;
     console.log('INFO: user logged out: ', username);
-    localSession.publish('com.ssp.user.channel.updateUserList', api.getUsers());
+    localSession.publish('local:updateUserList', api.getUsers());
     return true;
 };
 
@@ -54,7 +55,7 @@ api.unregister = function unregister(username, password) {
     if (!isRegistered(username) || users[username].passwordHash !== hashPassword(password)) throw['Invalid request.'];
     delete(users[username]);
     console.log('INFO: user unregistered: ', username);
-    localSession.publish('com.ssp.user.channel.updateUserList', api.getUsers());
+    localSession.publish('local:updateUserList', api.getUsers());
     return true;
 };
 
@@ -80,6 +81,10 @@ api.getLoggedInUsers = function getLoggedInUsers() {
     return getUsers().filter(function (user) {
        return user.isLoggedIn;
     });
+};
+
+api.isLoggedIn = function (username) {
+    return isRegistered(username) && users[username].token !== undefined;
 };
 
 // helper functions
@@ -108,14 +113,16 @@ var connection = new autobahn.Connection({
 
 connection.onopen =  function (session) {
     localSession = session;
+    session.prefix('local', serviceName);
+
     console.log('INFO: connected to the crossbar service.');
-    localSession.publish('com.ssp.user.channel.updateUserList', api.getUsers());
+    localSession.publish('local:updateUserList', api.getUsers());
 
     //register all the RPC API function
     for(var apiFunction in api) {
         (function(localApiFunction) {
             if (has.call(api, localApiFunction)) {
-                session.register('com.ssp.user.rpc.' + String(localApiFunction), function (args) {
+                session.register('local:' + String(localApiFunction), function (args) {
                     return api[localApiFunction].apply(null, args);
                 }).then(
                     function () {
@@ -131,16 +138,8 @@ connection.onopen =  function (session) {
 };
 
 connection.onclose = function (reason) {
+    localSession = undefined;
     console.log('INFO: connection to the crossbar service is closed: ', reason);
 };
 
 connection.open();
-
-
-// keep the service alive
-function waiting() {
-    //console.log('tick');
-    setTimeout(waiting, 3000);
-}
-setTimeout(waiting, 3000);
-
