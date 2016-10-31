@@ -97,3 +97,5 @@ modules.xml
 #project specific
 /crossbar-service/.crossbar/key.priv
 /crossbar-service/.crossbar/key.pub
+client/web/test.html
+crossbar-service/*.html

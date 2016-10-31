@@ -14,16 +14,17 @@ The demo prepares the main Schampsen app's API documentation.
 
 ## Directory structure
 
-* client: a html page with some JS code, this is the webapp.
+* client: a html page with some JS code, a static asset, this is the webapp. It is served by the crossbar-service. (Client code is quite ugly, this is just a prototype.)
 * crossbar-service: a docker container for the crossbar.io WAMP router, also responsible for the static HTTP requests.
-* user-service: a node.js microservice 
+* user-service: a node.js microservice, responsible for user registration and login.
+* table-service: a node.js microservice, responsible for table handling, but not for games.
  
 ## Install
 
 ### Needed packages for linux:
 
 * docker 1.12.x
-* node.js 4.6.x (LTS)
+* node.js 6.9.x (LTS)
 * wget
 * realpath
  
@@ -32,12 +33,13 @@ The demo prepares the main Schampsen app's API documentation.
 - First install node.js.
 - Change the directory where node.js microservices are found.
 - `npm install` will install all the dependencies
+- the node.js microservices will be containerized
  
 ### Preparing docker contained modules
 
-- Simple execute the `start.sh `for starting the service
-- Execute the `stop.sh `to stop the service and collect the logs.
-- More information in the `start.sh `file.
+- Simple execute the `start.sh` for starting the service
+- Execute the `stop.sh` to stop the service and collect the logs.
+- More information in the `start.sh` file.
 - No extra preparation needed, during the first install, all needed
 docker image will be fetched.
 
@@ -58,8 +60,17 @@ Used technologies:
 * Autobahn.js: http://autobahn.ws/js/
 * WAMP: http://wamp-proto.org/
 
+## Roadmap
 
-
-
-
- 
+* [X] Create a user a service to handle registration, login.
+* [X] Create a table service to group players to tables.
+* [ ] Crate a game service to execute a game on a specified table.
+* [ ] Use crossbar.io internals for login.
+* [ ] Describe API.
+* [ ] Containerize node.js services.
+* [ ] Setup docker compose, to build up and describe the architecture.
+* [ ] Add testing and CI/CD node to the architecture.
+* [ ] Add logging and health checking to the architecture.
+* [ ] Make a frontend with react or angular.
+* [ ] Integrate a noSQL database to the architecture.
+* [ ] Separate user service to register service and login service.
