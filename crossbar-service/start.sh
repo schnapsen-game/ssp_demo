@@ -23,11 +23,13 @@
 IN_PORT=8080
 OUT_PORT=8080
 # define the container name
-CONTAINER_NAME='crossbar-node'
+CONTAINER_NAME='crossbar-service'
 # static http path, relative to this scripts directory
 STATIC_WEB_PATH='../client/web'
 # config path, where the config.json can be found, relative to this scripts directory
 CONFIG_PATH='.crossbar'
+# the loglevel of the crossbar service: http://crossbar.io/docs/Logging/
+CROSSBAR_LOGLEVEL='debug'
 
 # get the full path for the script file itself --> absolute path is needed for docker command
 SCRIPTFILE=`realpath $0`
@@ -35,10 +37,10 @@ SCRIPTFILE=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPTFILE`
 
 #run the docker container, with port and dir mapping
-docker run --detach --publish $IN_PORT:$OUT_PORT --volume $SCRIPTPATH/$CONFIG_PATH:/node/.crossbar --volume $SCRIPTPATH/$STATIC_WEB_PATH:/node/web --name $CONTAINER_NAME crossbario/crossbar
+docker run --detach --publish $OUT_PORT:$IN_PORT --volume $SCRIPTPATH/$CONFIG_PATH:/node/.crossbar --volume $SCRIPTPATH/$STATIC_WEB_PATH:/node/web --name $CONTAINER_NAME crossbario/crossbar --loglevel $CROSSBAR_LOGLEVEL --logformat syslogd
 
 # wait while the HTTP port will be available provided by the container
-while ! wget --quiet http://127.0.0.1:$OUT_PORT/ >/dev/null
+while ! wget --quiet --delete-after http://127.0.0.1:$OUT_PORT/
 do
   echo "$(date) - still trying"
   sleep 1

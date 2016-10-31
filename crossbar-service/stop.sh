@@ -8,15 +8,15 @@
 # parameters:
 
 # the referred container name
-CONTAINER_NAME=crossbar-node
+CONTAINER_NAME='crossbar-service'
 
 #stop the docker container
 docker stop $CONTAINER_NAME
 # docker is wait till the stop is finished
 docker wait $CONTAINER_NAME
-# get the logs (STDOUT, STDERR)and saved into a file
+# get the logs (STDOUT, STDERR) and saved into a file
 docker logs $CONTAINER_NAME >> "$CONTAINER_NAME.log"
-# check the running docker processes
+# list the running docker processes
 docker ps
 # remove the stopped instances from the container list
 docker rm $CONTAINER_NAME
