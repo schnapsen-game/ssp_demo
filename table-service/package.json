@@ -1,0 +1,16 @@
+{
+  "name": "table-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "table-service.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node table-service.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autobahn": "^0.10.1"
+  }
+}
