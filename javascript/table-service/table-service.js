@@ -33,23 +33,25 @@ var tableObject = {
     }
 };
 
-api.create = function (username) {
-    return localSession.call('user:isLoggedIn', [username]).then(function (isUserLoggedIn) {
-        if (isUserLoggedIn === false) {
-            throw ['User not logged in!'];
-        }
-        var id = generateTableId();
-        var table = Object.create(tableObject);
-        table.users = Object.create(null);
-        table.addUser(username);
-        table.users[username].isInvited = true;
-        table.users[username].isJoined = true;
-        tables[id] = table;
-        console.log('Table created, id: ', id, 'by user User: ', username);
-        localSession.publish('local:updateTableList', api.list());
-        return api.get(id);
-    });
-};
+//try to use a scala service instead
+
+// api.create = function (username) {
+//     return localSession.call('user:isLoggedIn', [username]).then(function (isUserLoggedIn) {
+//         if (isUserLoggedIn === false) {
+//             throw ['User not logged in!'];
+//         }
+//         var id = generateTableId();
+//         var table = Object.create(tableObject);
+//         table.users = Object.create(null);
+//         table.addUser(username);
+//         table.users[username].isInvited = true;
+//         table.users[username].isJoined = true;
+//         tables[id] = table;
+//         console.log('Table created, id: ', id, 'by user User: ', username);
+//         localSession.publish('local:updateTableList', api.list());
+//         return api.get(id);
+//     });
+// };
 
 api.delete = function (tableId) {
     delete(tables[tableId]);
