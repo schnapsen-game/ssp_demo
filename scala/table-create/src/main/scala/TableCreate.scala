@@ -35,12 +35,13 @@ package tableCreate {
 
     def createTable(userName: String, session: Session){
       val isLoggedIn = session.call(
-        procedure = "user:isLoggedIn",
+        procedure = "com.ssp.user.isLoggedIn",
         args = List(userName)
       )
 
       isLoggedIn.onComplete {
         case Success(value) => {
+          println(value)
           if (value != true) {
             println("User not logged in")
           } else {
@@ -50,7 +51,7 @@ package tableCreate {
             tables += (id -> table)
             println("Table created from scala. Id: " + id + ", username: " + userName)
             session.publish(
-              topic = "local:updateTableList",
+              topic = "com.ssp.table.updateTableList",
               ack = true,
               kwdata = tables.toMap)
           }
@@ -66,7 +67,7 @@ package tableCreate {
           realm = "ssp-game")
 
         registration <- session.register(
-          procedure = "local:create",
+          procedure = "com.ssp.table.create",
           handler = (userName:String) => createTable(userName, session))
       }
       yield ()
