@@ -62,15 +62,21 @@ Used technologies:
 
 ## Roadmap
 
+Application
 * [X] Create a user a service to handle registration, login.
 * [X] Create a table service to group players to tables.
-* [ ] Crate a game service to execute a game on a specified table.
-* [ ] Use crossbar.io internals for login.
+* [ ] Crate a game service to execute a game on a specified table (do it stateless).
 * [ ] Describe API.
+* [ ] Make all services stateless.
+* [ ] Separate user service to register service and login service.
+* [ ] Use crossbar.io internals for login.
+* [ ] Make a frontend with react or angular.
+
+Application architecture, describe application services
 * [ ] Containerize node.js services.
 * [ ] Setup docker compose, to build up and describe the architecture.
-* [ ] Add testing and CI/CD node to the architecture.
+
+Devops architecture, external elements
 * [ ] Add logging and health checking to the architecture.
-* [ ] Make a frontend with react or angular.
-* [ ] Integrate a noSQL database to the architecture.
-* [ ] Separate user service to register service and login service.
+* [ ] Add testing and CI/CD node to the architecture.
+* [ ] Integrate a noSQL database / redis to the architecture --> make all the services stateless.
