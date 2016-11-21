@@ -107,7 +107,7 @@ function hashPassword(password) {
 
 // connection and service registration
 var connection = new autobahn.Connection({
-    url: "ws://127.0.0.1:8080/ws",
+    url: "ws://crossbar-service:8080/ws",
     realm: "ssp-game"
 });
 
