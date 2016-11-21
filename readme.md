@@ -1,54 +1,67 @@
 # SSP Demo
 
-Demonstrates how can be working together a crossbar.io WAMP 
-router, a node.js microservice and a simple websocket
-based webapp.
+Demonstrates how can be working together a crossbar.io WAMP router, 
+a more node.js microservices and a simple websocket based webapp, using
+Docker to containerize and manage them all together. 
  
 The webapp shows a simple interface, where a user can 
-log in, log out, register and deregister. The always fresh
-user list are shown below the login form.
+log in, log out, register and deregister, and able to manage "tables". 
+The always fresh user list are shown below the login form.
  
 The demo's main goal is to test the WAMP protocol's models: RPC and PUB-SUB.
 
-The demo prepares the main Schampsen app's API documentation.
+The demo prepares the main Schnapscen app's API documentation and base modules.
 
 ## Directory structure
 
 * client: a html page with some JS code, a static asset, this is the webapp. It is served by the crossbar-service. (Client code is quite ugly, this is just a prototype.)
 * crossbar-service: a docker container for the crossbar.io WAMP router, also responsible for the static HTTP requests.
-* user-service: a node.js microservice, responsible for user registration and login.
-* table-service: a node.js microservice, responsible for table handling, but not for games.
+* javascript/user-service: a node.js microservice, responsible for user registration and login.
+* javascript/table-service: a node.js microservice, responsible for table handling (grouping of the users), but not for games.
+* docker-compose.yml: describes the services, networks and volumes for Docker for one command service execution.
  
 ## Install
 
-### Needed packages for linux:
+### Dependencies
 
-* docker 1.12.x
-* node.js 6.9.x (LTS)
-* wget
-* realpath
- 
-### Preparing the node.js microservices
-
-- First install node.js.
-- Change the directory where node.js microservices are found.
-- `npm install` will install all the dependencies
-- the node.js microservices will be containerized
- 
-### Preparing docker contained modules
-
-- Simple execute the `start.sh` for starting the service
-- Execute the `stop.sh` to stop the service and collect the logs.
-- More information in the `start.sh` file.
-- No extra preparation needed, during the first install, all needed
-docker image will be fetched.
-
+* docker 1.12.x engine [install docs](https://docs.docker.com/engine/installation/linux/)
+* docker-compose 1.8.x [install docs](https://docs.docker.com/compose/install/)
+  
 ## Execution
 
-* First start the crossbar.io router by executing the `start.sh` from the `crossarbar-service` directory.
-* Start the other services after that, like `user-service`.
-* Use the `npm start` to start the node.js services.
-* Navigate to the `http://127.0.0.1:8080` in your web browser, you will see the application.
+### Start the application
+* Ensure that you installed both docker engine and docker-compose.
+* Navigate to the main directory where the `docker-compose.yml` is located. 
+* Execute the `docker-compose up` command.
+* Navigate to the `http://127.0.0.1:8080` in your web browser to reach the application.
+
+### Stop the application
+* Execute the `docker-compose down` command from the project directory.
+
+## Development
+
+### Dependencies for development
+* Node.js 6.9.x [install instruction](https://nodejs.org/en/download/package-manager/).
+
+### Preparing the node.js microservices for development without docker container execution
+
+* Change the directory where node.js microservices are found.
+* `npm install` will install all the module dependencies, see `package.json`.
+* The `Dockerfile` describes, how the docker container should build by docker.
+
+### Note about hostnames and networking in code
+*Note:* Docker compose defines networks for all the dockerized microservices.
+All the docker containers name (defined in `docker-compose.yml`) will be 
+the host names of the services in the defined network. From now the code is refers
+to the service hosts as its service names instead of localhost.
+
+For example you can connect from the code to the crossbar router (which name is crossbar-service
+it is defined as the first service in `docker-compose.yml`) with the `ws://crossbar-service:8080/ws` URL.
+The `localhost` will be not working anymore.
+
+### Log collection from all of the services
+After you started the aplication with the `docker-compose up`, the same window you will be see all of the logs
+produced by all the services signed with a service tag in the beginning. This is a docker-compose feature.
 
 ## Resources
 
@@ -73,8 +86,8 @@ Application
 * [ ] Make a frontend with react or angular.
 
 Application architecture, describe application services
-* [ ] Containerize node.js services.
-* [ ] Setup docker compose, to build up and describe the architecture.
+* [x] Containerize node.js services.
+* [x] Setup docker compose, to build up and describe the architecture.
 
 Devops architecture, external elements
 * [ ] Add logging and health checking to the architecture.

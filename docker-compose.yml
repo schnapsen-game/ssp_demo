@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+  crossbar-service:
+    image: crossbario/crossbar
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./client/web:/node/web
+      - ./crossbar-service/.crossbar:/node/.crossbar
+    networks:
+      - internal
+      - public
+    command: [--logformat, syslogd]
+
+
+  user-service:
+    build: ./javascript/user-service
+    image: samson84/schnapsen-user-service
+    depends_on:
+      - crossbar-service
+    networks:
+      - internal
+
+  table-service:
+    build: ./javascript/table-service
+    image: samson84/schnapsen-table-service
+    depends_on:
+      - crossbar-service
+    networks:
+      - internal
+
+networks:
+  internal:
+  public:
