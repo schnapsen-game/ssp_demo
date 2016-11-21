@@ -33,25 +33,23 @@ var tableObject = {
     }
 };
 
-//try to use a scala service instead
-
-// api.create = function (username) {
-//     return localSession.call('user:isLoggedIn', [username]).then(function (isUserLoggedIn) {
-//         if (isUserLoggedIn === false) {
-//             throw ['User not logged in!'];
-//         }
-//         var id = generateTableId();
-//         var table = Object.create(tableObject);
-//         table.users = Object.create(null);
-//         table.addUser(username);
-//         table.users[username].isInvited = true;
-//         table.users[username].isJoined = true;
-//         tables[id] = table;
-//         console.log('Table created, id: ', id, 'by user User: ', username);
-//         localSession.publish('local:updateTableList', api.list());
-//         return api.get(id);
-//     });
-// };
+api.create = function (username) {
+    return localSession.call('user:isLoggedIn', [username]).then(function (isUserLoggedIn) {
+        if (isUserLoggedIn === false) {
+            throw ['User not logged in!'];
+        }
+        var id = generateTableId();
+        var table = Object.create(tableObject);
+        table.users = Object.create(null);
+        table.addUser(username);
+        table.users[username].isInvited = true;
+        table.users[username].isJoined = true;
+        tables[id] = table;
+        console.log('Table created, id: ', id, 'by user User: ', username);
+        localSession.publish('local:updateTableList', api.list());
+        return api.get(id);
+    });
+};
 
 api.delete = function (tableId) {
     delete(tables[tableId]);
@@ -121,7 +119,7 @@ function generateTableId() {
 
 // connection
 var connection = new autobahn.Connection({
-    url: "ws://127.0.0.1:8080/ws",
+    url: "ws://crossbar-service:8080/ws",
     realm: "ssp-game"
 });
 
