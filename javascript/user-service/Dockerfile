@@ -1,15 +1,24 @@
-FROM node:boron
+FROM node:boron-alpine
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN apk update && apk add python make g++
+
+# create an app user to not execute the app as root, for security reason.
+# also creates an app directory /home/app
+RUN addgroup -S app && adduser -S -g app app
+
+WORKDIR /home/app/
 
 # Install app dependencies
-COPY package.json /usr/src/app/
+COPY package.json /home/app/
+RUN chown -R app:app /home/app/*
+USER app
 RUN npm install
 
 # Bundle app source
-COPY . /usr/src/app
+USER root
+COPY . /home/app
+RUN chown -R app:app /home/app/*
+USER app
 
-CMD [ "npm", "start" ]
+CMD [ "node", "user-service.js" ]
 

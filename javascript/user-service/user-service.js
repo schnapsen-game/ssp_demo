@@ -142,4 +142,14 @@ connection.onclose = function (reason) {
     console.log('INFO: connection to the crossbar service is closed: ', reason);
 };
 
+process.on('SIGTERM', function () {
+    console.log('INFO: SIGTERM received, closing the connection...');
+    connection.close();
+});
+
+process.on('SIGINT', function () {
+    console.log('INFO: SIGINT received, closing the connection...');
+    connection.close();
+});
+
 connection.open();
