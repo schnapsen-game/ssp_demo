@@ -12,7 +12,7 @@ var serviceName = 'com.ssp.table';
 var userServiceName = 'com.ssp.user';
 var tableId = 0;
 var localSession = undefined;
-
+var gracefulShutDown = false;
 var tableObject = {
     addUser: function (username) {
         if(!(username in this.users)) {
@@ -150,16 +150,28 @@ connection.onopen =  function (session) {
 
 connection.onclose = function (reason) {
     console.log('INFO: connection to the crossbar service is closed: ', reason);
+    if(gracefulShutDown) {
+        console.log('INFO: Shutdown process is finished.');
+        process.exit(0);
+    }
 };
 
 process.on('SIGTERM', function () {
     console.log('INFO: SIGTERM received, closing the connection...');
-    connection.close();
+    shutdown();
 });
 
 process.on('SIGINT', function () {
     console.log('INFO: SIGINT received, closing the connection...');
-    connection.close();
+    shutdown();
 });
 
+function shutdown() {
+    var error;
+    if((error = connection.close()) !== undefined) {
+        console.log('ERROR: The connection could not be closed gracefully:', error);
+        process.exit(1);
+    }
+    gracefulShutDown = true;
+}
 connection.open();

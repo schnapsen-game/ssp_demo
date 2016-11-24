@@ -12,5 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "autobahn": "^0.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }

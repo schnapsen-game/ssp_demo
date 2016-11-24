@@ -9,6 +9,7 @@ var tokenId = Math.floor(Math.random() * 100);
 var tokenSalt = 'dflsdjfhsdsdfjl';
 var localSession = undefined;
 var serviceName = 'com.ssp.user';
+var gracefulShutDown = false;
 
 // interface functions
 api.login = function login(username, password) {
@@ -138,18 +139,29 @@ connection.onopen =  function (session) {
 };
 
 connection.onclose = function (reason) {
-    localSession = undefined;
     console.log('INFO: connection to the crossbar service is closed: ', reason);
+    if(gracefulShutDown) {
+        console.log('INFO: Shutdown process is finished.');
+        process.exit(0);
+    }
 };
 
 process.on('SIGTERM', function () {
     console.log('INFO: SIGTERM received, closing the connection...');
-    connection.close();
+    shutdown();
 });
 
 process.on('SIGINT', function () {
     console.log('INFO: SIGINT received, closing the connection...');
-    connection.close();
+    shutdown();
 });
 
+function shutdown() {
+    var error;
+    if((error = connection.close()) !== undefined) {
+        console.log('ERROR: The connection could not be closed gracefully:', error);
+        process.exit(1);
+    }
+    gracefulShutDown = true;
+}
 connection.open();
