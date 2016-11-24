@@ -6,8 +6,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./client/web:/node/web
-      - ./crossbar-service/.crossbar:/node/.crossbar
+      - ./client:/node/web
+      - ./crossbar-service/config.json:/node/.crossbar/config.json
     networks:
       - internal
       - public
@@ -15,7 +15,6 @@ services:
 
 
   user-service:
-    build: ./javascript/user-service
     image: samson84/schnapsen-user-service
     depends_on:
       - crossbar-service
@@ -23,7 +22,6 @@ services:
       - internal
 
   table-service:
-    build: ./javascript/table-service
     image: samson84/schnapsen-table-service
     depends_on:
       - crossbar-service

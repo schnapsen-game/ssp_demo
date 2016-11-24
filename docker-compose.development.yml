@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+
+  user-service:
+    build:
+      context: ./javascript/user-service
+      args:
+        NODE_ENV: development
+    volumes:
+       - ./javascript/user-service:/home/app/service
+    command: [../node_modules/.bin/nodemon, --inspect=9001, user-service.js]
+    expose:
+      - "9001"
+    ports:
+      - "9001:9001"
+    environment:
+      - NODE_ENV=development
+
+  table-service:
+    build:
+      context: ./javascript/table-service
+      args:
+        NODE_ENV: development
+    volumes:
+       - ./javascript/table-service:/home/app/service
+    command: [../node_modules/.bin/nodemon, --inspect=9000, table-service.js]
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+    environment:
+      - NODE_ENV=development
+
+
