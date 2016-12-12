@@ -20,6 +20,9 @@ Mapping defined in `docker-compose.yml` (Client code is quite ugly, this is just
 * crossbar-service: a configuration file to the crossbar.io WAMP router, described in the `docker-compose.yml`.
 * javascript/user-service: a node.js microservice, responsible for user registration and login.
 * javascript/table-service: a node.js microservice, responsible for table handling (grouping of the users), but not for games.
+* javascript/lib: node.js modules used common by the microservices.
+* javascript/Dockerfile-common: A common dokcerfile used to build all kind of node.js based containers. 
+* javascript/.dockerignore: A dockerigonre file used for all node.js based container's build.
 * scala/*: scala based microservices.
 * docker-compose.yml: describes the services, networks and volumes for Docker for one command service execution.
 * docker-compose.development.yml: describes the development related configuration.
@@ -49,11 +52,8 @@ Mapping defined in `docker-compose.yml` (Client code is quite ugly, this is just
 For examining dependencies, check the following files.
 * For application architecture and general Docker container dependencies see: `docker-compose.yml`.
 * For development container dependencies and debug port binding see: `docker-compose.development.yml`.
-* For a given service Docker container dependencies see: `Dockerfile` in the service source directory.
+* For a Javascript based Docker container dependencies see: `Dockerfile-common` in the javascript subdir.
 * For a given node.js application level dependencies see: `package.json` in the service source directory.
-
-### Preparing the node.js microservices for development without docker container execution
-* Not recommended to develop without containerization. 
 
 ### Development with docker
 * `docker-compose.development.yml` contains the modificion related to docker-compose.yml for development.
@@ -71,6 +71,9 @@ in the container.
 * The services are executed with an --inspect command, can be used to debugging in chrome with a given ports, 
 see `docker-compose.development.yml`.
 * The `NODE_ENV` variable is also set to `development` in the execution container. 
+* The `Dockerfile-common` dockerfile is responsible to build all the node.js based services driven by `docker-compose.yml`, 
+a build argument is used to define which node.js service will be installed inside a container. See the
+dockerfile for more details.
 
 ### Note about hostnames and networking in code
 *Note:* Docker compose defines networks for all the dockerized microservices.
@@ -107,6 +110,7 @@ Application
 * [ ] Make all services stateless.
 * [ ] Separate user service to register service and login service. (?)
 * [ ] Use crossbar.io internals for login.
+* [ ] Create an external configuration file.
 * [ ] Make a frontend with react or angular.
 * [ ] Crate a game service to execute a game on a specified table (do it stateless).
 
@@ -115,6 +119,7 @@ Application architecture, describe application services
 * [X] Setup docker composer, to build up and describe the architecture.
 * [X] Make development friendly docker images for javascript.
 * [ ] Node.js services: hide the node_modules on the host from the container's code in development mode.
+* [ ] Configure an init system for production code in containers.
 
 Devops architecture, external elements
 * [ ] Integrate a noSQL database / redis to the architecture --> make all the services stateless.
