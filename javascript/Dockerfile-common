@@ -1,0 +1,55 @@
+FROM node:boron-alpine
+LABEL com.ssp-game.description="A common dockerfile to create node.js services using a common lib subdir as shared libraries." \
+      com.ssp-game.version="1.0.0" \
+      com.ssp-game.author="Daniel Hatas <samson84@gmail.com>"
+
+# Used arguments:
+#  NODE_ENV - production by default, if it set to "development" npm will install the devDependencies also
+#  SERVICE_SOURCE_SUBDIR - defines the subdir, where the root of the node.js source located to build
+#  DEBUG - debug argument for the node.js module, debug.
+
+# Directory structure for this container
+#  /home/app - the executing user's home directory
+#  /home/app/service - the application code will be copied here
+#  /home/app/node_modules - external npm modules will be installed here
+#  /home/app/lib - the shared js modules will be copied here
+
+# update the package manager's repo and install dependencies needed for NPM modules.
+RUN apk update && apk add python make g++
+
+# creates an app user to not execute the app as root, for security reason.
+# creates the subdirs under the service and lib
+RUN addgroup -S app && adduser -S -g app app \
+    && mkdir /home/app/service \
+    && mkdir /home/app/lib \
+    && chown -R app:app /home/app/*
+
+WORKDIR /home/app/
+
+# Arguments defined during the build
+ARG NODE_ENV=production
+ARG SERVICE_SOURCE_SUBDIR
+ARG DEBUG
+RUN printenv
+
+# Install app dependencies using the source's package.json. Copy can be made
+# as root only, for execution you have to set owner of the files and switch user.
+COPY ./$SERVICE_SOURCE_SUBDIR/package.json /home/app/
+RUN chown -R app:app /home/app/*
+USER app
+RUN npm install
+
+# Copy shared source files
+COPY ./lib /home/app/lib
+
+WORKDIR /home/app/service
+
+# copy the source code as root, set the ownership and switch user.
+USER root
+COPY ./$SERVICE_SOURCE_SUBDIR /home/app/service
+RUN chown -R app:app /home/app/service/*
+USER app
+
+# set the default command, not using NPM because it is not forward the signals to
+# the application, so we execute the service directly using node.
+CMD [ "node", "service.js" ]

@@ -137,10 +137,10 @@ connection.onopen =  function (session) {
                 return api[localApiFunction].apply(null, args);
             }).then(
                 function () {
-                    console.log('INFO: registered rpc function:', localApiFunction);
+                    console.log('INFO: registered registers function:', localApiFunction);
                 },
                 function (error) {
-                    console.log('ERROR: could not be registered the following rpc function', localApiFunction, error);
+                    console.log('ERROR: could not be registered the following registers function', localApiFunction, error);
                 }
             );
         })(apiFunction);
@@ -156,17 +156,7 @@ connection.onclose = function (reason) {
     }
 };
 
-process.on('SIGTERM', function () {
-    console.log('INFO: SIGTERM received, closing the connection...');
-    shutdown();
-});
-
-process.on('SIGINT', function () {
-    console.log('INFO: SIGINT received, closing the connection...');
-    shutdown();
-});
-
-function shutdown() {
+exports.shutdownHandler = function shutdownHandler() {
     var error;
     if((error = connection.close()) !== undefined) {
         console.log('ERROR: The connection could not be closed gracefully:', error);
@@ -174,4 +164,6 @@ function shutdown() {
     }
     gracefulShutDown = true;
 }
-connection.open();
+
+exports.main = function main() { connection.open(); }
+
