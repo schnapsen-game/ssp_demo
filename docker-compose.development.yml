@@ -1,15 +1,16 @@
 version: "2"
 
 services:
+  crossbar-service:
+    #command: [--logformat, syslogd, --loglevel, debug]
 
   user-service:
     build:
-      context: ./javascript/user-service
       args:
         NODE_ENV: development
     volumes:
        - ./javascript/user-service:/home/app/service
-    command: [../node_modules/.bin/nodemon, --inspect=9001, user-service.js]
+    command: [../node_modules/.bin/nodemon, --inspect=9001, service.js]
     expose:
       - "9001"
     ports:
@@ -19,17 +20,14 @@ services:
 
   table-service:
     build:
-      context: ./javascript/table-service
       args:
         NODE_ENV: development
     volumes:
        - ./javascript/table-service:/home/app/service
-    command: [../node_modules/.bin/nodemon, --inspect=9000, table-service.js]
+    command: [../node_modules/.bin/nodemon, --inspect=9000, service.js]
     expose:
       - "9000"
     ports:
       - "9000:9000"
     environment:
       - NODE_ENV=development
-
-
