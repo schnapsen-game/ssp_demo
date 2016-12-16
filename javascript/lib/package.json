@@ -1,0 +1,19 @@
+{
+  "name": "common-lib",
+  "version": "1.0.0",
+  "description": " common library for javascript services",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autobahn": "^0.11.1",
+    "debug": "^2.3.3",
+    "winston": "^2.3.0"
+  },
+  "devDependencies": {
+    "jsdoc-to-markdown": "^2.0.1",
+    "nodemon": "^1.11.0"
+  }
+}

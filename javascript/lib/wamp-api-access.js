@@ -7,11 +7,8 @@ var autobahn = require('autobahn');
 // module variables
 var connection = undefined;
 
-console.log('TEST********');
-
 function createPropertyChain(object, properties) {
     var newProperty;
-    //console.log(object, properties);
     if (properties.length < 1 || !isObject(object) || !Array.isArray.call(null, properties) ) {
         return object;
     }
@@ -38,73 +35,69 @@ function isObject(object) {
 }
 
 // api handlers
-exports.registerDictionary = function registerDictionary(service, dictionary) {
+exports.registerDictionary = function (servicePrefix, dictionary) {
     forEachOnObject(dictionary, function inLoopHandler(name, handler) {
-        exports.register(service, handler).then(function success() {
-            console.log('INFO: service registered: ', service + '.' + name);
+        exports.register(servicePrefix, handler).then(function success() {
+            console.log('INFO: service registered: ', servicePrefix + name);
         }, function error(error) {
-            console.log('ERROR: service could not be registered', service + '.' + name, ' because: ', error);
+            console.log('ERROR: service could not be registered', servicePrefix + name, ' because: ', error);
         });
     });
 };
 
-exports.subscribeDictionary = function subscribeDictionary(service, dictionary) {
+exports.subscribeDictionary = function (servicePrefix, dictionary) {
     forEachOnObject(dictionary, function inLoopHandler(name, handler) {
-        exports.subscribe(service, handler).then(function success() {
-            console.log('INFO: service subscribed: ', service + '.' + name);
+        exports.subscribe(servicePrefix, handler).then(function success() {
+            console.log('INFO: service subscribed: ', servicePrefix + name);
         }, function error(error) {
-            console.log('ERROR: service could not be subscribed', service, '.', name, ' because: ', error);
+            console.log('ERROR: service could not be subscribed', servicePrefix, name, ' because: ', error);
         });
     });
 };
 
-exports.processApiDescription = function processApiDescription (api) {
+exports.processApiDescription = function (api) {
     forEachOnObject(api, function inLoopHandler(serviceName, service) {
-        exports.registerDictionary(service.uri, service.registers);
-        exports.subscribeDictionary(service.uri, service.subscribers);
+        exports.registerDictionary(service.prefix, service.registers);
+        exports.subscribeDictionary(service.prefix, service.subscribers);
     });
 };
 
 // interface handlers
-exports.publish = function publish(service, handler, callingArgs) {
+exports.publish = function (servicePrefix, handler, callingArgs) {
     var args = undefined, kwargs = undefined;
-    var channel = service + '.' + handler.name;
+    var topic = servicePrefix + handler.name;
     var data = handler.apply(null, callingArgs);
     if (isObject(data) && Array.isArray(data)) {
         args = data;
     } else {
         kwargs = data;
     }
-    console.log('publish invoked', channel, args, kwargs);
-    return connection.session.publish(channel, args, kwargs);
+    console.log('publish invoked', topic, args, kwargs);
+    return connection.session.publish(topic, args, kwargs);
 };
 
-exports.register = function register(service, handler) {
-    return connection.session.register(service + '.' + handler.name, function registerHandler(args)  {
+exports.register = function (servicePrefix, handler) {
+    return connection.session.register(servicePrefix + handler.name, function registerHandler(args)  {
         return handler.apply(null, args);
     });
 };
 
-exports.registerService = function(name, uri) {
-    connection.session.prefix(name, uri);
-};
-
-exports.subscribe = function subscribe(service, handler) {
-    return connection.session.subscribe(service + '.' + handler.name, function registerHandler(args)  {
+exports.subscribe = function subscribe(servicePrefix, handler) {
+    return connection.session.subscribe(servicePrefix + handler.name, function registerHandler(args)  {
         return handler.apply(null, args);
     });
 };
 
-exports.remoteCall = function remoteCall(service, handler, callingArgs) {
+exports.remoteCall = function remoteCall(servicePrefix, handler, callingArgs) {
     var args = undefined, kwargs = undefined;
-    var channel = service + '.' + handler.name;
+    var topic = servicePrefix + handler.name;
     var data = handler.apply(null, callingArgs);
     if (isObject(data) && Array.isArray(data)) {
         args = data;
     } else {
         kwargs = data;
     }
-    return connection.session.call(channel, args, kwargs);
+    return connection.session.call(topic, args, kwargs);
 };
 
 exports.connect = function connect(realm, uri, onOpen, onClose) {
@@ -125,6 +118,12 @@ exports.connect = function connect(realm, uri, onOpen, onClose) {
 
 exports.close = function close() {
     return connection.close();
+};
+
+exports.error = function error(errorUri, message, errorObject) {
+    message = message || [];
+    errorObject = errorObject || {};
+    throw new autobahn.Error(errorUri, message, errorObject);
 };
 
 exports.CONNECTION_CLOSED_SUCCESSFUL = undefined;

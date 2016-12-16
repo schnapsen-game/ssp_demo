@@ -6,9 +6,9 @@ module.exports = function (givenShutdonwHandler) {
     shutdownHandler = givenShutdonwHandler;
 };
 
-process.on('SIGTERM', function () {
+process.on('SIGTERM', function (reason) {
     console.log('INFO: SIGTERM received, closing the connection...');
-    shutdownHandler();
+    shutdownHandler(reason);
 });
 
 process.on('SIGINT', function (reason) {
