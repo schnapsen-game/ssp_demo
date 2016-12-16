@@ -50,7 +50,7 @@ var api = {
  * @function updateUserList
  * @return {Array<publicUserData>}
  */
-api.local.publishers.updateUserList = function () {
+api.local.publishers.updateUserList = function updateUserList() {
     return data.getUserList();
 };
 
@@ -66,7 +66,7 @@ api.local.publishers.updateUserList = function () {
  * @throws 'The username or the password is invalid'
  * @throws 'User already registered'
  */
-api.local.registers.register = function (username, password) {
+api.local.registers.register = function register(username, password) {
     if(!username || !password) { apiThrows('The username or the password is invalid!'); }
     if(data.isUserRegistered(username)) { apiThrows('User is already registered!'); }
 
@@ -113,7 +113,7 @@ api.local.registers.unregister = function unregister(username, password) {
  * @throws 'Invalid credentials.'
  *
  */
-api.local.registers.login = function (username, password) {
+api.local.registers.login = function login(username, password) {
     var token;
 
     if (!data.isUserRegistered(username)) { apiThrows('The user is not registered'); }
@@ -137,7 +137,7 @@ api.local.registers.login = function (username, password) {
  * @returns {boolean} true if the logout procedure successful.
  * @throws 'Invalid credentials.'
  */
-api.local.registers.logout = function (username, token) {
+api.local.registers.logout = function logout(username, token) {
     if (!isValidLogin(username, token)) { apiThrows('Invalid credentials.'); }
     data.makeUserLoggedOut(username);
     log.info('User logout: %s', username);
@@ -155,7 +155,7 @@ api.local.registers.logout = function (username, token) {
  * @param {string} token A session token to check.
  * @returns {boolean} returns true if the user is registered and logged in with a valid token.
  */
-api.local.registers.isValidLogin = function (username, token) {
+api.local.registers.isValidLogin = function isValidLogin(username, token) {
     return data.isUserRegistered(username) && data.isUserTokenValid(username, token);
 };
 
@@ -169,7 +169,7 @@ api.local.registers.isValidLogin = function (username, token) {
  * @param {string} username A username to check.
  * @returns {boolean} returns true, if the user is registered and has a session token.
  */
-api.local.registers.isLoggedIn = function (username) {
+api.local.registers.isLoggedIn = function isLoggedIn(username) {
     return data.isUserRegistered(username) && data.hasUserToken(username);
 };
 
@@ -181,7 +181,7 @@ api.local.registers.isLoggedIn = function (username) {
  * @function getUsers
  * @return {Array<publicUserData>}
  */
-api.local.registers.getUsers = function () {
+api.local.registers.getUsers = function getUsers() {
     return data.getUserList();
 };
 
@@ -193,7 +193,7 @@ api.local.registers.getUsers = function () {
  * @function getLoggedInUsers
  * @return {Array<publicUserData>}
  */
-api.local.registers.getLoggedInUsers = function () {
+api.local.registers.getLoggedInUsers = function getLoggedInUsers() {
     return data.getLoggedInUserList();
 };
 
@@ -216,10 +216,9 @@ exports.main = function main() {
     log.info('Service started: %s', serviceName);
 
     // connect and handling
-    apiHandler.connect('ssp-game', 'ws://crossbar-service:8080/ws', function onOpenHandler() {
+    apiHandler.connect('ssp-game', 'ws://localhost:8080/ws', function onOpenHandler() {
         log.info('Connected to the WAMP router.');
         apiHandler.processApiDescription(api);
-        //apiHandler.publish(api.local.prefix, api.local.publishers.updateUserList());
     }, function onCloseHandler(reason) {
         log.warn('Connection closed, the reason: ', reason);
     });

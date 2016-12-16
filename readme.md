@@ -46,7 +46,7 @@ Mapping defined in `docker-compose.yml` (Client code is quite ugly, this is just
 ### Stop the application
 * Execute the `docker-compose down` command from the project directory.
 
-## Development mode
+## Development 
 
 ### Dependencies, where to find them?
 For examining dependencies, check the following files.
@@ -76,18 +76,21 @@ a build argument is used to define which node.js service will be installed insid
 dockerfile for more details.
 
 ### Note about hostnames and networking in code
-*Note:* Docker compose defines networks for all the dockerized microservices.
-All the docker containers name (defined in `docker-compose.yml`) will be 
-the host names of the services in the defined network. From now the code is refers
-to the service hosts as its service names instead of localhost.
+The containers are executed in `host` mode. This means, that the host computers network will be used
+for all of the containers. All the services provided by the containers can be reached by localhost +
+the specific port. 
 
-For example you can connect from the code to the crossbar router (which name is crossbar-service
-it is defined as the first service in `docker-compose.yml`) with the `ws://crossbar-service:8080/ws` URL.
-The `localhost` will be not working anymore.
+The crossbar service can be reached on `ws:\\localhost:8080\ws` for example. You can able the connect this
+service from a local service from your computer without containerizatioin. This is useful for in early phase 
+development of a service or a quict trial. 
 
 ### Log collection from all of the services
 After you started the application with the `docker-compose` in development mode, the same window you will be see all of the logs
 produced by all the services signed with a service tag in the beginning. This is a docker-compose feature.
+
+### Documentation
+Possible to use JSdoc or JavaDoc in the code. The javascript tool that able to generate internal documentation from is
+jsdoc2md
 
 ## Resources
 
@@ -99,6 +102,7 @@ Used technologies:
 * Autobahn.js: http://autobahn.ws/js/
 * WAMP: http://wamp-proto.org/
 * nodemon: https://www.npmjs.com/package/nodemon
+* jsdoc-to-markdown: https://www.npmjs.com/package/jsdoc-to-markdown
 
 ## Roadmap
 

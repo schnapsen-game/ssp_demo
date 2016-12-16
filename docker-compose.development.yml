@@ -10,11 +10,11 @@ services:
         NODE_ENV: development
     volumes:
        - ./javascript/user-service:/home/app/service
-    command: [../node_modules/.bin/nodemon, --inspect=9001, service.js]
+    command: [../lib/node_modules/.bin/nodemon, --inspect=9000, service.js]
     expose:
-      - "9001"
+      - "9000" # for chrome debugger
     ports:
-      - "9001:9001"
+      - "9000:9000" # for chrome debugger
     environment:
       - NODE_ENV=development
 
@@ -24,10 +24,10 @@ services:
         NODE_ENV: development
     volumes:
        - ./javascript/table-service:/home/app/service
-    command: [../node_modules/.bin/nodemon, --inspect=9000, service.js]
+    command: [../lib/node_modules/.bin/nodemon, --inspect=9001, service.js]
     expose:
-      - "9000"
+      - "9001" # for chrome debugger
     ports:
-      - "9000:9000"
+      - "9001:9001" # for chrome debugger
     environment:
       - NODE_ENV=development

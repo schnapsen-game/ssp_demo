@@ -1,8 +1,3 @@
-FROM node:boron-alpine
-LABEL com.ssp-game.description="A common dockerfile to create node.js services using a common lib subdir as shared libraries." \
-      com.ssp-game.version="1.0.0" \
-      com.ssp-game.author="Daniel Hatas <samson84@gmail.com>"
-
 # Used arguments:
 #  NODE_ENV - production by default, if it set to "development" npm will install the devDependencies also
 #  SERVICE_SOURCE_SUBDIR - defines the subdir, where the root of the node.js source located to build
@@ -14,41 +9,59 @@ LABEL com.ssp-game.description="A common dockerfile to create node.js services u
 #  /home/app/node_modules - external npm modules will be installed here
 #  /home/app/lib - the shared js modules will be copied here
 
-# update the package manager's repo and install dependencies needed for NPM modules.
-RUN apk update && apk add python make g++
+FROM node:boron-alpine
+LABEL com.ssp-game.description="A common dockerfile to create node.js services using a common lib subdir as shared libraries." \
+      com.ssp-game.version="1.0.0" \
+      com.ssp-game.author="Daniel Hatas <samson84@gmail.com>"
 
-# creates an app user to not execute the app as root, for security reason.
-# creates the subdirs under the service and lib
-RUN addgroup -S app && adduser -S -g app app \
+# -- Operating system dependencies and environmentr --
+
+# Update the package manager's repo and install dependencies needed for NPM modules.
+# Creates an app user to not execute the app as root, for security reason.
+# Creates the subdirs under the service and lib
+# Python and compiler dependencies are needed beacuse of the autobahn wamp module.
+
+RUN apk update && apk add python make g++ \
+    && addgroup -S app && adduser -S -g app app \
     && mkdir /home/app/service \
     && mkdir /home/app/lib \
     && chown -R app:app /home/app/*
 
-WORKDIR /home/app/
 
-# Arguments defined during the build
+# -- Node.js application dependencies and enironment --
+
+# Arguments defined during the build, needed only for the next layers
 ARG NODE_ENV=production
 ARG SERVICE_SOURCE_SUBDIR
-ARG DEBUG
-RUN printenv
 
-# Install app dependencies using the source's package.json. Copy can be made
-# as root only, for execution you have to set owner of the files and switch user.
-COPY ./$SERVICE_SOURCE_SUBDIR/package.json /home/app/
+# Install app and lib npm dependencies using the source's and lib's package.json
+# This layer will be cached for building this part of the image, dependenies changes rarer than
+# the application and a the lib source code.
+COPY ./lib/package.json /home/app/lib/
 RUN chown -R app:app /home/app/*
 USER app
-RUN npm install
+RUN cd /home/app/lib && npm install
+COPY ./$SERVICE_SOURCE_SUBDIR/package.json /home/app/
+USER root
+RUN chown -R app:app /home/app/*
+USER app
+RUN cd /home/app && npm install
 
-# Copy shared source files
-COPY ./lib /home/app/lib
-
-WORKDIR /home/app/service
+# -- Source code --
 
 # copy the source code as root, set the ownership and switch user.
-USER root
 COPY ./$SERVICE_SOURCE_SUBDIR /home/app/service
-RUN chown -R app:app /home/app/service/*
+COPY ./lib /home/app/lib
+USER root
+RUN chown -R app:app /home/app/*
 USER app
+
+# -- Execution --
+# Grab the execution related arguments if exists
+ARG DEBUG
+ARG NODE_LOG_LEVEL
+RUN printenv
+WORKDIR /home/app/service
 
 # set the default command, not using NPM because it is not forward the signals to
 # the application, so we execute the service directly using node.

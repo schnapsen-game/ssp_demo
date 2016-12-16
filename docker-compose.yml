@@ -8,9 +8,10 @@ services:
     volumes:
       - ./client:/node/web
       - ./crossbar-service/config.json:/node/.crossbar/config.json
-    networks:
-      - internal
-      - public
+#    networks:
+#      - internal
+#      - public
+    network_mode: host
     command: [--logformat, syslogd, --loglevel, info]
 
 
@@ -23,8 +24,9 @@ services:
     image: samson84/schnapsen-user-service
     depends_on:
       - crossbar-service
-    networks:
-      - internal
+    network_mode: host
+#    networks:
+#      - internal
 
   table-service:
     build:
@@ -35,11 +37,12 @@ services:
     image: samson84/schnapsen-table-service
     depends_on:
       - crossbar-service
-    networks:
-      - internal
+    network_mode: host
+#    networks:
+#      - internal
 
-networks:
-  internal:
-    driver: bridge
-  public:
-    driver: bridge
+#networks:
+#  internal:
+#    driver: bridge
+#  public:
+#    driver: bridge

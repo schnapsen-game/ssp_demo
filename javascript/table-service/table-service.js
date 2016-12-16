@@ -119,7 +119,7 @@ function generateTableId() {
 
 // connection
 var connection = new autobahn.Connection({
-    url: "ws://crossbar-service:8080/ws",
+    url: "ws://localhost:8080/ws",
     realm: "ssp-game"
 });
 
@@ -163,7 +163,7 @@ exports.shutdownHandler = function shutdownHandler() {
         process.exit(1);
     }
     gracefulShutDown = true;
-}
+};
 
 exports.main = function main() { connection.open(); }
 
