@@ -21,21 +21,21 @@ This service provides a user handler functions like registration, login, logout,
 ### user~updateUserList() ⇒ <code>Array.&lt;publicUserData&gt;</code>
 Returns the public data of all of the users.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Api**: topic.publisher  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Api**: topic.publisher
 <a name="module_user..register"></a>
 
 ### user~register(username, password) ⇒ <code>boolean</code>
 Register a new subscriber in the subscriber database.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Returns**: <code>boolean</code> - always true if success  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Returns**: <code>boolean</code> - always true if success
 **Throws**:
 
 - 'The username or the password is invalid'
 - 'User already registered'
 
-**Api**: procedure.register  
+**Api**: procedure.register
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -47,14 +47,14 @@ Register a new subscriber in the subscriber database.
 ### user~unregister(username, password) ⇒ <code>boolean</code>
 Removes a username from a user registration database.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Returns**: <code>boolean</code> - true, if the unregistrtation success.  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Returns**: <code>boolean</code> - true, if the unregistrtation success.
 **Throws**:
 
 - 'The user is not registered.'
 - 'Invalid credentials.'
 
-**Api**: procedure.register  
+**Api**: procedure.register
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -67,15 +67,15 @@ Removes a username from a user registration database.
 Give a user a logged in status by generating a token to it. With this token a user can validate any
 login while not logged out.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Returns**: <code>string</code> - A token belongs to the user login.  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Returns**: <code>string</code> - A token belongs to the user login.
 **Throws**:
 
 - 'The user is not registered'
 - 'User is already logged in!'
 - 'Invalid credentials.'
 
-**Api**: procedure.register  
+**Api**: procedure.register
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -87,13 +87,13 @@ login while not logged out.
 ### user~logout(username, token) ⇒ <code>boolean</code>
 Set a user state in a user database to logged out by removing its token.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Returns**: <code>boolean</code> - true if the logout procedure successful.  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Returns**: <code>boolean</code> - true if the logout procedure successful.
 **Throws**:
 
 - 'Invalid credentials.'
 
-**Api**: procedure.register  
+**Api**: procedure.register
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -105,9 +105,9 @@ Set a user state in a user database to logged out by removing its token.
 ### user~isValidLogin(username, token) ⇒ <code>boolean</code>
 Examine that the given user registered and have a valid session token.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Returns**: <code>boolean</code> - returns true if the user is registered and logged in with a valid token.  
-**Api**: procedure.register  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Returns**: <code>boolean</code> - returns true if the user is registered and logged in with a valid token.
+**Api**: procedure.register
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -120,9 +120,9 @@ Examine that the given user registered and have a valid session token.
 Examine that the user has a session token, but not checks, that it is valid or not.
 Useful for status checking, when listing users and the token to check is not known.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Returns**: <code>boolean</code> - returns true, if the user is registered and has a session token.  
-**Api**: procedure.register  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Returns**: <code>boolean</code> - returns true, if the user is registered and has a session token.
+**Api**: procedure.register
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -133,12 +133,12 @@ Useful for status checking, when listing users and the token to check is not kno
 ### user~getUsers() ⇒ <code>Array.&lt;publicUserData&gt;</code>
 Returns the public data of all of the users.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Api**: procedure.register  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Api**: procedure.register
 <a name="module_user..getLoggedInUsers"></a>
 
 ### user~getLoggedInUsers() ⇒ <code>Array.&lt;publicUserData&gt;</code>
 Returns the public data of the logged in users.
 
-**Kind**: inner method of <code>[user](#module_user)</code>  
-**Api**: procedure.register  
+**Kind**: inner method of <code>[user](#module_user)</code>
+**Api**: procedure.register

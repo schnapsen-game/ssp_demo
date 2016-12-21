@@ -27,7 +27,6 @@ RUN apk update && apk add python make g++ \
     && mkdir /home/app/lib \
     && chown -R app:app /home/app/*
 
-
 # -- Node.js application dependencies and enironment --
 
 # Arguments defined during the build, needed only for the next layers
