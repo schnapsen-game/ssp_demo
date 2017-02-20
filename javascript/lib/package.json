@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "description": " common library for javascript services",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "export NODE_LOG_LEVEL=\"emerg\" && mocha ../**/*.test.js",
+    "start": "echo \"This is a lib package, not needed to start on its own\" && exit 1"
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=6.9.4",
+    "npm": ">=4.1.1"
+  },
   "dependencies": {
     "autobahn": "^0.11.1",
     "debug": "^2.3.3",
+    "wampy": "^4.1.0",
     "winston": "^2.3.0"
   },
   "devDependencies": {
     "jsdoc-to-markdown": "^2.0.1",
-    "nodemon": "^1.11.0"
+    "mocha": "^3.2.0",
+    "nodemon": "^1.11.0",
+    "sinon": "^1.17.7"
   }
 }
