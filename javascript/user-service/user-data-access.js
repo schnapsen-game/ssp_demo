@@ -1,3 +1,6 @@
+/**
+ * Provides a user data access wrapper. Keeps the business logic independent from the data access method.
+ */
 'use strict';
 
 // includes

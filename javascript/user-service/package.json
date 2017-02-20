@@ -11,5 +11,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+  },
+  "apidoc": {
+    "name": "example",
+    "version": "0.1.0",
+    "description": "apiDoc basic example",
+    "title": "Custom apiDoc browser title",
+    "url" : "https://api.github.com/v1"
+  },
+  "esdoc": {
+    "source": ".",
+    "destination": "./esdoc"
   }
 }
