@@ -2,7 +2,7 @@ version: "2"
 
 services:
   crossbar-service:
-    #command: [--logformat, syslogd, --loglevel, debug]
+    command: [--logformat, syslogd, --loglevel, trace]
 
   user-service:
     build:
