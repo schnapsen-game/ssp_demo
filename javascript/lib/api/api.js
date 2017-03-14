@@ -45,6 +45,7 @@ var getApi = (options = {}, baseService) => {
      *  will be return a Promise, which is fulfilled if the registration is successful with the WAMP Dealer, or rejected
      *  if the registration is failed. The fulfilled handler will got the registration uri as a value, the reject handler
      *  will return a ProtocolError.
+     * @provate
      */
     var calleeFactory = function (uri, handler) {
 

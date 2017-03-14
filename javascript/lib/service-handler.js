@@ -2,8 +2,8 @@
 
 var shutdownHandler = undefined;
 
-module.exports = function (givenShutdonwHandler) {
-    shutdownHandler = givenShutdonwHandler;
+module.exports = function (givenShutdownHandler) {
+    shutdownHandler = givenShutdownHandler;
 };
 
 process.on('SIGTERM', function (reason) {
