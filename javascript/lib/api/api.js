@@ -176,7 +176,7 @@ var getApi = (options = {}, baseService) => {
     */
 
     /**
-     * Returns a function to handle the handler subscribtion to an uri in a PUBSUB model.
+     * Returns a function to handle the handler subscription to an uri in a PUBSUB model.
      *
      * @param {String} uri - A WAMP uri to subscribe for.
      * @param {function (argsDict.result)} handler - The handler function, will be called, when an EVENT is received on

@@ -20,9 +20,9 @@ connection.onopen = function (session, details) {
     session.prefix('user', 'com.ssp.user');
     session.prefix('table', 'com.ssp.table');
 
-    session.subscribe('user:updateUserList', function (users) {
+    session.subscribe('user:updateUserList', function (args, kwargs) {
         clearChildren(document.getElementById('userList'));
-        fillUserList(users);
+        fillUserList(unwrapResult(kwargs));
     });
 
     session.subscribe('table:updateTableList', function (tables) {
@@ -30,14 +30,16 @@ connection.onopen = function (session, details) {
         fillTableList(tables);
     });
 
-    session.call('user:getUsers').then(fillUserList);
+    session.call('user:getUsers').then( function(autobahnResult) {
+            fillUserList(unwrapResult(unwrapAutobahnResultObject(autobahnResult)));
+    });
     session.call('table:list').then(fillTableList);
 
     document.getElementById('register').addEventListener('click', function (event) {
         var loginData = getLoginData();
         session.call('user:register', [loginData.username, loginData.password])
-            .then(function (result) {
-                console.log('Successful registration.', result);})
+            .then(function (autobahnResult) {
+                console.log('Successful registration.', unwrapResult(unwrapAutobahnResultObject(autobahnResult)));})
             .catch(handleError);
         event.preventDefault();
     });
@@ -52,7 +54,8 @@ connection.onopen = function (session, details) {
         var loginData = getLoginData();
         loggedInUser.name = loginData.username;
         session.call('user:login', [loginData.username, loginData.password])
-            .then(function (result) {
+            .then(function (autobahnResult) {
+                var result = unwrapResult(unwrapAutobahnResultObject(autobahnResult));
                 loggedInUser.token = result;
                 loggedInUser.name = loginData.username;
                 console.log('Successful login.', result, loggedInUser.token);
@@ -81,22 +84,22 @@ connection.onopen = function (session, details) {
         event.preventDefault();
         var loginData = getLoginData();
         session.call('user:logout', [loginData.username, loggedInUser.token])
-            .then(function (result) {
+            .then(function (autobahnResult) {
                 loggedInUser.name = undefined;
                 loggedInUser.token = undefined;
-                console.log('Successful logout.', result);})
-            .catch(handleError);
+                console.log('Successful logout.', unwrapResult(unwrapAutobahnResultObject(autobahnResult)));
+            }).catch(handleError);
     });
 
     document.getElementById('unregsiter').addEventListener('click', function (event) {
         event.preventDefault();
         var loginData = getLoginData();
         session.call('user:unregister', [loginData.username, loginData.password])
-            .then(function (result) {
+            .then(function (autobahnResult) {
                 loggedInUser.name = undefined;
                 loggedInUser.token = undefined;
-                console.log('Successful unregistration.', result);})
-            .catch(handleError);
+                console.log('Successful unregistration.', unwrapResult(unwrapAutobahnResultObject(autobahnResult)));
+            }).catch(handleError);
     });
 
     document.getElementById('create').addEventListener('click', function (event) {
@@ -155,6 +158,20 @@ connection.onclose = function (reason, details) {
     console.log("Connection lost: ", reason, details);
 };
 connection.open();
+
+function unwrapAutobahnResultObject(autobahnResult) {
+    if(autobahnResult && autobahnResult.kwargs) {
+        return autobahnResult.kwargs;
+    } else {
+        return undefined;
+    }
+}
+
+function unwrapResult(resultObject) {
+    if(resultObject && resultObject.result) {
+        return resultObject.result;
+    }
+}
 
 function joinTable(tableId, username) {
     return connection.session.call('table:join', [tableId, username])

@@ -52,7 +52,7 @@ var register = (username, password) => {
     if(data.isUserRegistered(username)) { throw api.error.user_already_exist() }
 
     data.makeUserRegistered(username, password);
-    log.info('User registered: %s', username);
+    log.info(`User registered: ${username}`);
     api.publish.updateUserList(data.getUserList());
     return true;
 };
@@ -75,7 +75,7 @@ var unregister = (username, password) => {
     if (!data.isUserPasswordValid(username, password)) { throw api.error.invalid_credentials() }
 
     data.makeUserUnregistered(username);
-    log.info('User is unregistered: %s', username);
+    log.info(`User is unregistered: ${username}`);
     api.publish.updateUserList(data.getUserList());
     return true;
 };
@@ -101,7 +101,7 @@ var login = (username, password) => {
     if (!data.isUserPasswordValid(username, password)) { throw api.error.invalid_credentials() }
 
     token = data.makeUserLoggedIn(username);
-    log.info('User login: ', username);
+    log.info(`User login: ${username}`);
     api.publish.updateUserList(data.getUserList());
     return token;
 };
@@ -118,7 +118,7 @@ api.add.callee('login', login);
 var logout = (username, token) => {
     if (!isValidLogin(username, token)) { throw api.error.invalid_credentials(); }
     data.makeUserLoggedOut(username);
-    log.info('User logout: %s', username);
+    log.info(`User logout: ${username}`);
     api.publish.updateUserList(data.getUserList());
     return true;
 };
