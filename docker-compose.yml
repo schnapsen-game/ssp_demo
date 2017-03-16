@@ -1,4 +1,4 @@
-version: "2"
+version: "2.1"
 
 services:
   crossbar-service:
@@ -13,6 +13,9 @@ services:
 #      - public
     network_mode: host
     command: [--logformat, syslogd, --loglevel, info]
+    healthcheck:
+      test: ["CMD", "wget", "-s", "http://localhost:8080/ws"]
+
 
 
   user-service:
@@ -23,7 +26,8 @@ services:
         SERVICE_SOURCE_SUBDIR: user-service
     image: samson84/schnapsen-user-service
     depends_on:
-      - crossbar-service
+      crossbar-service:
+        condition: service_healthy
     network_mode: host
 #    networks:
 #      - internal
@@ -36,7 +40,8 @@ services:
         SERVICE_SOURCE_SUBDIR: table-service
     image: samson84/schnapsen-table-service
     depends_on:
-      - crossbar-service
+      crossbar-service:
+        condition: service_healthy
     network_mode: host
 #    networks:
 #      - internal

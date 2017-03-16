@@ -7,12 +7,14 @@
 const APP_PREFIX = 'com.ssp';
 const SERVICE_NAME = 'user';
 
+const util = require('util');
+
 const data = require('./user-data-access.js');
 const log = require('../lib/log-handler.js').getLogger(SERVICE_NAME);
 const apiHandler = require('./../lib/api/api');
 
 var api = apiHandler.getApi({
-    connectionDetails: {realm: 'ssp-game', url: 'ws://localhost:8080/ws', autoReconnect: true, maxRetries: 3},
+    connectionDetails: {realm: 'ssp-game', url: 'ws://localhost:8080/ws', autoReconnect: true, maxRetries: 15},
     uriPrefix: `${APP_PREFIX}.${SERVICE_NAME}`,
 });
 
@@ -168,20 +170,20 @@ var getLoggedInUsers = function getLoggedInUsers() {
 api.add.callee('getLoggedInUsers', getLoggedInUsers);
 
 exports.main = () => {
-    log.info('Service started: %s', SERVICE_NAME);
+    log.info(`Service started: ${SERVICE_NAME}`);
 
     // connect and handling
     api.connect(() => {
         log.info('Connected to the WAMP router.');
         api.registerAll().then( (results) => {
-            results.forEach((result) => { log.info('Service registered:', result) });
+            results.forEach((result) => { log.info(`Service registered: ${result}`) });
         }).catch((error) => {
-            log.error('Error during service registration', error)
+            log.error(`Error during service registration ${error}`)
         });
     }, (reason) => {
-        log.warn('Connection closed, the reason: ', reason);
+        log.warn(`Connection closed, the reason: ${reason}`);
     }, (error) => {
-        log.error('Error during the connection.');
+        log.error(`Error during the connection: ${util.inspect(error, false, null   )}`);
     });
 };
 

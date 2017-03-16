@@ -17,8 +17,8 @@ The demo prepares the main Schnapscen app's API documentation and base modules.
 
 ### Explicit dependencies
 
-* docker 1.12.x engine [install docs](https://docs.docker.com/engine/installation/linux/)
-* docker-compose 1.8.x [install docs](https://docs.docker.com/compose/install/)
+* docker engine at least: 17.03.0-ce [install docs](https://docs.docker.com/engine/installation/linux/)
+* docker-compose at least: 1.11.2 [install docs](https://docs.docker.com/compose/install/)
   
 ## Execution
 
@@ -43,10 +43,8 @@ Application
 * [ ] Describe API.
 * [ ] Create a data access service, integrate to the database.
 * [ ] Make all services stateless.
-* [ ] Make testing framework.
-* [ ] Separate user service to register service and login service. (?)
 * [ ] Use crossbar.io internals for login.
-* [ ] Create an external configuration file.
+* [ ] Create an external configuration file and its handler.
 * [ ] Make a web frontend with react or angular.
 * [ ] Crate a game service to execute a game on a specified table (do it stateless).
 

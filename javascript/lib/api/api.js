@@ -291,7 +291,7 @@ var getApi = (options = {}, baseService) => {
                 onConnect: onOpen,
                 onClose: onClose,
                 onError: onError,
-                onReconnect: () => { log.warning('Reconnecting...') },
+                onReconnect: () => { log.warn('Reconnecting...') },
                 onReconnectSuccess: () => { log.info('Reconnection successful.') }
             });
 
